@@ -9,6 +9,9 @@ const Room = (props) => {
     const peer = useRef();
     const userStream = useRef();
 
+    let isVideoOn = true;
+    let isAudioOn = true;
+
     useEffect(() => {
         navigator.mediaDevices.getUserMedia({ audio: true, video: true}).then(stream => {
             console.log("hello");
@@ -112,12 +115,24 @@ const Room = (props) => {
         peerVideo.current.srcObject = e.streams[0];
     }
 
+    function toggleMicrophone() {
+        isAudioOn = !isAudioOn;
+        console.log(userStream.current)
+        userStream.current.getAudioTracks()[0].enabled = isAudioOn;
+    }
 
+    function toggleVideo() {
+        isVideoOn = !isVideoOn;
+        console.log(userStream.current)
+        userStream.current.getVideoTracks()[0].enabled = isVideoOn;
+    }
 
     return (
       <div>
           <video autoPlay ref={userVideo}/>
           <video autoPlay ref={peerVideo}/>
+          <button onClick={toggleMicrophone}>Toggle microphone</button>
+          <button onClick={toggleVideo}>Toggle video</button>
       </div>
     );
 };
