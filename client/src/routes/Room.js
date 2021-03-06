@@ -1,147 +1,166 @@
-import React, {useRef, useEffect} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
+import Peer from "simple-peer";
+import styled from "styled-components";
+
+const Container = styled.div`
+    padding: 20px;
+    display: flex;
+    height: 100vh;
+    width: 90%;
+    margin: auto;
+    flex-wrap: wrap;
+`;
+
+const StyledVideo = styled.video`
+    height: 40%;
+    width: 50%;
+`;
+
+const Video = (props) => {
+    const ref = useRef();
+
+    useEffect(() => {
+        props.peer.on("stream", stream => {
+            ref.current.srcObject = stream;
+        })
+    }, []);
+
+    return (
+        <StyledVideo playsInline autoPlay ref={ref} />
+    );
+}
+
+
+const videoConstraints = {
+    height: window.innerHeight / 2,
+    width: window.innerWidth / 2
+};
 
 const Room = (props) => {
-    const userVideo = useRef();
-    const peerVideo = useRef();
-    const peerRef = useRef();
+    const [peers, setPeers] = useState([]);
     const socketRef = useRef();
-    const peer = useRef();
+    const userVideo = useRef();
     const userStream = useRef();
+    const peersRef = useRef([]);
+    const roomID = props.match.params.roomID;
 
     let isVideoOn = true;
     let isAudioOn = true;
 
     useEffect(() => {
-        navigator.mediaDevices.getUserMedia({ audio: true, video: true}).then(stream => {
+        socketRef.current = io.connect("/");
+        navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true }).then(stream => {
             userVideo.current.srcObject = stream;
             userStream.current = stream;
-
-            socketRef.current = io.connect("/");
-            socketRef.current.emit("join room", props.match.params.roomID)
-
-            socketRef.current.on("peer", userID => {
-                callUser(userID);
-                peer.current = userID;
+            socketRef.current.emit("join room", roomID);
+            socketRef.current.on("all users", users => {
+                const peers = [];
+                users.forEach(userID => {
+                    const peer = createPeer(userID, socketRef.current.id, stream);
+                    peersRef.current.push({
+                        peerID: userID,
+                        peer,
+                    })
+                    peers.push(peer);
+                })
+                setPeers(peers);
             })
 
-            socketRef.current.on("peer joined", userID => {
-                peer.current = userID;
-            })
+            socketRef.current.on("user joined", payload => {
+                const peer = addPeer(payload.signal, payload.callerID, stream);
+                peersRef.current.push({
+                    peerID: payload.callerID,
+                    peer,
+                })
 
-            socketRef.current.on("offer", handleReceiveCall);
-            socketRef.current.on("answer", handleAnswer);
-            socketRef.current.on("ice-candidate", handleNewICECandidateMessage);
+                setPeers(users => [...users, peer]);
+            });
 
+            socketRef.current.on("receiving returned signal", payload => {
+                const item = peersRef.current.find(p => p.peerID === payload.id);
+                item.peer.signal(payload.signal);
+            });
+        })
+    }, []);
+
+    function createPeer(userToSignal, callerID, stream) {
+        const peer = new Peer({
+            initiator: true,
+            trickle: false,
+            config: {
+
+                iceServers: [
+                    // {
+                    //     urls: "stun:numb.viagenie.ca",
+                    //     username: "sultan1640@gmail.com",
+                    //     credential: "98376683"
+                    // },
+                    // {
+                    //     urls: "turn:numb.viagenie.ca",
+                    //     username: "sultan1640@gmail.com",
+                    //     credential: "98376683"
+                    // }
+                    {url:'stun:stun01.sipphone.com'},
+                    {url:'stun:stun.ekiga.net'},
+                    {url:'stun:stun.fwdnet.net'},
+                    {url:'stun:stun.ideasip.com'},
+                    {url:'stun:stun.iptel.org'},
+                    {url:'stun:stun.rixtelecom.se'},
+                    {url:'stun:stun.schlund.de'},
+                    {url:'stun:stun.l.google.com:19302'},
+                    {url:'stun:stun1.l.google.com:19302'},
+                    {url:'stun:stun2.l.google.com:19302'},
+                    {url:'stun:stun3.l.google.com:19302'},
+                    {url:'stun:stun4.l.google.com:19302'},
+                    {url:'stun:stunserver.org'},
+                    {url:'stun:stun.softjoys.com'},
+                    {url:'stun:stun.voiparound.com'},
+                    {url:'stun:stun.voipbuster.com'},
+                    {url:'stun:stun.voipstunt.com'},
+                    {url:'stun:stun.voxgratia.org'},
+                    {url:'stun:stun.xten.com'},
+                    {
+                        url: 'turn:numb.viagenie.ca',
+                        credential: 'muazkh',
+                        username: 'webrtc@live.com'
+                    },
+                    {
+                        url: 'turn:192.158.29.39:3478?transport=udp',
+                        credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                        username: '28224511:1379330808'
+                    },
+                    {
+                        url: 'turn:192.158.29.39:3478?transport=tcp',
+                        credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                        username: '28224511:1379330808'
+                    }
+                ]
+            },
+            stream: stream,
         });
-    });
 
-    function callUser(userID) {
-        peerRef.current = createPeer(userID);
-        userStream.current.getTracks().forEach(track => peerRef.current.addTrack(track, userStream.current));
-    }
-
-    function createPeer(userID) {
-        const peer = new RTCPeerConnection({
-            iceServers: [
-                {url:'stun:stun01.sipphone.com'},
-                {url:'stun:stun.ekiga.net'},
-                {url:'stun:stun.fwdnet.net'},
-                {url:'stun:stun.ideasip.com'},
-                {url:'stun:stun.iptel.org'},
-                {url:'stun:stun.rixtelecom.se'},
-                {url:'stun:stun.schlund.de'},
-                {url:'stun:stun.l.google.com:19302'},
-                {url:'stun:stun1.l.google.com:19302'},
-                {url:'stun:stun2.l.google.com:19302'},
-                {url:'stun:stun3.l.google.com:19302'},
-                {url:'stun:stun4.l.google.com:19302'},
-                {url:'stun:stunserver.org'},
-                {url:'stun:stun.softjoys.com'},
-                {url:'stun:stun.voiparound.com'},
-                {url:'stun:stun.voipbuster.com'},
-                {url:'stun:stun.voipstunt.com'},
-                {url:'stun:stun.voxgratia.org'},
-                {url:'stun:stun.xten.com'},
-                {
-                    url: 'turn:numb.viagenie.ca',
-                    credential: 'muazkh',
-                    username: 'webrtc@live.com'
-                },
-                {
-                    url: 'turn:192.158.29.39:3478?transport=udp',
-                    credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-                    username: '28224511:1379330808'
-                },
-                {
-                    url: 'turn:192.158.29.39:3478?transport=tcp',
-                    credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-                    username: '28224511:1379330808'
-                }
-            ]
-        });
-        peer.onicecandidate = handleICECandidateEvent;
-        peer.ontrack = handleTrackEvent;
-        peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID);
+        peer.on("signal", signal => {
+            socketRef.current.emit("sending signal", { userToSignal, callerID, signal })
+        })
 
         return peer;
     }
 
-    function handleNegotiationNeededEvent(userID) {
-        peerRef.current.createOffer().then(offer => {
-            return peerRef.current.setLocalDescription(offer)
-        }).then(() => {
-            const payload = {
-                target: userID,
-                caller: socketRef.current.id,
-                sdp: peerRef.current.localDescription
-            };
-            socketRef.current.emit("offer", payload);
-        }).catch(e => console.log(e));
-    }
-
-    function handleReceiveCall(incoming) {
-        peerRef.current = createPeer();
-        const desc = new RTCSessionDescription(incoming.sdp);
-        peerRef.current.setRemoteDescription(desc).then(() => {
-            userStream.current.getTracks().forEach(track => peerRef.current.addTrack(track, userStream.current));
-        }).then(() => {
-            return peerRef.current.createAnswer();
-        }).then(answer => {
-            return peerRef.current.setLocalDescription(answer);
-        }).then(() => {
-            const payload = {
-                target: incoming.caller,
-                caller: socketRef.current.id,
-                sdp: peerRef.current.localDescription
-            };
-            socketRef.current.emit("answer", payload);
+    function addPeer(incomingSignal, callerID, stream) {
+        const peer = new Peer({
+            initiator: false,
+            trickle: false,
+            stream,
         })
-    }
 
-    function handleAnswer(message) {
-        const desc = new RTCSessionDescription(message.sdp);
-        peerRef.current.setRemoteDescription(desc).catch(e => console.log(e));
-    }
+        peer.on("signal", signal => {
+            socketRef.current.emit("returning signal", { signal, callerID })
+        })
 
-    function handleICECandidateEvent(e) {
-        if (e.candidate) {
-            const payload = {
-                target: peer.current,
-                candidate: e.candidate
-            };
-            socketRef.current.emit("ice-candidate", payload);
-        }
-    }
+        peer.signal(incomingSignal);
 
-    function handleNewICECandidateMessage(incoming) {
-        const candidate = new RTCIceCandidate(incoming);
-        peerRef.current.addIceCandidate(candidate)
-            .catch(e => console.log(e));
-    }
-
-    function handleTrackEvent(e) {
-        peerVideo.current.srcObject = e.streams[0];
+        return peer;
     }
 
     function toggleMicrophone() {
@@ -157,12 +176,23 @@ const Room = (props) => {
     }
 
     return (
-      <div>
-          <video autoPlay muted ref={userVideo}/>
-          <video autoPlay ref={peerVideo}/>
-          <button onClick={toggleMicrophone}>Toggle microphone</button>
-          <button onClick={toggleVideo}>Toggle video</button>
-      </div>
+        <div>
+            <Container>
+                <StyledVideo muted ref={userVideo} autoPlay playsInline />
+                {peers.map((peer, index) => {
+                    return (
+                        <Video key={index} peer={peer} />
+                    );
+                })}
+            </Container>
+            <div   style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"}}>
+                <button onClick={toggleMicrophone}>Toggle microphone</button>
+                <button onClick={toggleVideo}>Toggle video</button>
+            </div>
+        </div>
     );
 };
 

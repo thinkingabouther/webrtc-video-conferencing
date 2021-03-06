@@ -1,5 +1,5 @@
 import React from "react";
-import {v1 as uuid} from "uuid";
+import { v1 as uuid } from "uuid";
 
 const CreateRoom = (props) => {
     function create() {
@@ -8,7 +8,7 @@ const CreateRoom = (props) => {
     }
 
     return (
-        <button onClick={create}>Create Room</button>
+        <button onClick={create}>Create room</button>
     );
 };
 
