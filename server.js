@@ -4,10 +4,12 @@ const app = express();
 const server = http.createServer(app)
 const socket = require("socket.io")
 const io = socket(server)
+const path = require("path")
 
 const rooms = {}
 
 io.on("connection", socket => {
+    console.log(`socket with id ${socket.id} connected!`)
     socket.on("join room", roomID => {
         if (rooms[roomID]) rooms[roomID].push(socket.id);
         else rooms[roomID] = [socket.id];
@@ -30,9 +32,11 @@ io.on("connection", socket => {
 
 })
 
-app.get("/", (req, res) => {
-    res.send("Hello from the server!")
-})
-
+if (process.env.PROD) {
+    app.use(express.static(path.join(__dirname, './client/build')))
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, './client/build/index.html'))
+    })
+}
 const port = parseInt(process.env.PORT) || 8000;
 server.listen(port, () => console.log(`Server is running on port ${port}`))

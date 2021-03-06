@@ -14,9 +14,7 @@ const Room = (props) => {
 
     useEffect(() => {
         navigator.mediaDevices.getUserMedia({ audio: true, video: true}).then(stream => {
-            console.log("hello");
             userVideo.current.srcObject = stream;
-            console.log(stream);
             userStream.current = stream;
 
             socketRef.current = io.connect("/");
