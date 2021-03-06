@@ -5,4 +5,4 @@ WORKDIR /app
 RUN yarn install
 
 COPY . /app
-CMD ["yarn", "run"]
+CMD ["yarn", "start"]
