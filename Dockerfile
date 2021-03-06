@@ -5,5 +5,4 @@ WORKDIR /app
 RUN yarn install
 
 COPY . /app
-EXPOSE 8000
 CMD ["npm", "start"]
