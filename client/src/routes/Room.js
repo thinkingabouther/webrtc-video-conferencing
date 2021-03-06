@@ -127,7 +127,7 @@ const Room = (props) => {
 
     return (
       <div>
-          <video autoPlay ref={userVideo}/>
+          <video autoPlay muted ref={userVideo}/>
           <video autoPlay ref={peerVideo}/>
           <button onClick={toggleMicrophone}>Toggle microphone</button>
           <button onClick={toggleVideo}>Toggle video</button>
