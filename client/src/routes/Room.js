@@ -3,19 +3,54 @@ import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
 
-const Container = styled.div`
-    padding: 20px;
+const PeerVideoContainer = styled.div`
+    padding: 1rem;
     display: flex;
-    height: 100vh;
-    width: 90%;
+    height: 90vh;
+    width: 90vw;
     margin: auto;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
 `;
 
-const StyledVideo = styled.video`
-    height: 40%;
-    width: 50%;
+const PeerVideo = styled.video`
+    height: 50%;
+    width: 40%;
+    object-fit: cover;
 `;
+
+const UserVideo = styled.video`
+    height: 60%;
+    width: 40%;
+`;
+
+const UserVideoContainer = styled.div`
+    max-width: 30rem;
+    max-height: 30rem;
+    height: auto;
+    width: auto;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1;
+`;
+
+const ControlsContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100vw;
+  height: 5rem;
+  z-index: 1;
+  align-items: center;
+  justify-content: space-around;
+  display: flex;
+  background: lightgrey;
+`;
+
+const RoomContainer = styled.div`
+  background: black;
+`
 
 const Video = (props) => {
     const ref = useRef();
@@ -27,7 +62,7 @@ const Video = (props) => {
     }, []);
 
     return (
-        <StyledVideo playsInline autoPlay ref={ref} />
+        <PeerVideo playsInline autoPlay ref={ref} />
     );
 }
 
@@ -62,7 +97,10 @@ const Room = (props) => {
                         peerID: userID,
                         peer,
                     })
-                    peers.push(peer);
+                    peers.push({
+                        peerID: userID,
+                        peer,
+                    });
                 })
                 setPeers(peers);
             })
@@ -74,13 +112,25 @@ const Room = (props) => {
                     peer,
                 })
 
-                setPeers(users => [...users, peer]);
+                const peerObj = {
+                    peerID: payload.callerID,
+                    peer,
+                }
+
+                setPeers(users => [...users, peerObj]);
             });
 
             socketRef.current.on("receiving returned signal", payload => {
                 const item = peersRef.current.find(p => p.peerID === payload.id);
                 item.peer.signal(payload.signal);
             });
+
+            socketRef.current.on("user left", id => {
+                const peerObj = peersRef.current.find(p => p.peerID === id);
+                if (peerObj) peerObj.peer.destroy();
+                const peers = peersRef.current.filter(p => p.peerID !== id);
+                setPeers(peers)
+            })
         })
     }, []);
 
@@ -91,16 +141,6 @@ const Room = (props) => {
             config: {
 
                 iceServers: [
-                    // {
-                    //     urls: "stun:numb.viagenie.ca",
-                    //     username: "sultan1640@gmail.com",
-                    //     credential: "98376683"
-                    // },
-                    // {
-                    //     urls: "turn:numb.viagenie.ca",
-                    //     username: "sultan1640@gmail.com",
-                    //     credential: "98376683"
-                    // }
                     {url:'stun:stun01.sipphone.com'},
                     {url:'stun:stun.ekiga.net'},
                     {url:'stun:stun.fwdnet.net'},
@@ -175,24 +215,33 @@ const Room = (props) => {
         userStream.current.getVideoTracks()[0].enabled = isVideoOn;
     }
 
+    function shareScreen() {
+
+    }
+
+    function leaveCall() {
+
+    }
+
     return (
-        <div>
-            <Container>
-                <StyledVideo muted ref={userVideo} autoPlay playsInline />
-                {peers.map((peer, index) => {
+        <RoomContainer>
+            <UserVideoContainer>
+                <UserVideo muted ref={userVideo} autoPlay playsInline />
+            </UserVideoContainer>
+            <PeerVideoContainer>
+                {peers.map((peer) => {
                     return (
-                        <Video key={index} peer={peer} />
+                        <Video key={peer.peerID} peer={peer.peer} />
                     );
                 })}
-            </Container>
-            <div   style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"}}>
+            </PeerVideoContainer>
+            <ControlsContainer>
                 <button onClick={toggleMicrophone}>Toggle microphone</button>
                 <button onClick={toggleVideo}>Toggle video</button>
-            </div>
-        </div>
+                <button onClick={shareScreen}>Share screen</button>
+                <button onClick={leaveCall}>Leave call</button>
+            </ControlsContainer>
+        </RoomContainer>
     );
 };
 

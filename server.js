@@ -10,7 +10,7 @@ const users = {};
 const socketToRoom = {};
 
 io.on('connection', socket => {
-    console.log("connected!")
+    console.log(`socket with id ${socket.id} connected!`)
     socket.on("join room", roomID => {
         if (users[roomID]) {
             const length = users[roomID].length;
@@ -43,6 +43,7 @@ io.on('connection', socket => {
             room = room.filter(id => id !== socket.id);
             users[roomID] = room;
         }
+        socket.broadcast.emit("user left", socket.id)
     });
 
 });
