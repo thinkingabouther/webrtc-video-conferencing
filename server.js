@@ -1,52 +1,57 @@
-const express = require("express");
-const http = require("http");
-const app = express();
-const server = http.createServer(app);
-const socket = require("socket.io");
-const io = socket(server);
-const path = require("path");
-const users = {};
+const express = require('express')
+const http = require('http')
+const app = express()
+const server = http.createServer(app)
+const socket = require('socket.io')
+const io = socket(server)
+const username = require('username-generator')
+const path = require('path')
+const { AwakeHeroku } = require('awake-heroku');
 
-const socketToRoom = {};
+AwakeHeroku.add({
+    url: "https://cuckooapp.herokuapp.com"
+})
+
+app.use(express.static('./client/build'));
+
+app.get('*', (req,res)=>{
+    res.sendFile(path.resolve(__dirname, "client","build","index.html"));
+})
+
+const users={}
 
 io.on('connection', socket => {
-    console.log("connected!")
-    socket.on("join room", roomID => {
-        if (users[roomID]) {
-            const length = users[roomID].length;
-            if (length === 4) {
-                socket.emit("room full");
-                return;
-            }
-            users[roomID].push(socket.id);
-        } else {
-            users[roomID] = [socket.id];
-        }
-        socketToRoom[socket.id] = roomID;
-        const usersInThisRoom = users[roomID].filter(id => id !== socket.id);
+    //generate username against a socket connection and store it
+    const userid=username.generateUsername('-')
+    if(!users[userid]){
+        users[userid] = socket.id
+    }
+    //send back username
+    socket.emit('yourID', userid)
+    io.sockets.emit('allUsers', users)
+    
+    socket.on('disconnect', ()=>{
+        delete users[userid]
+    })
 
-        socket.emit("all users", usersInThisRoom);
-    });
+    socket.on('callUser', (data)=>{
+        io.to(users[data.userToCall]).emit('hey', {signal: data.signalData, from: data.from})
+    })
 
-    socket.on("sending signal", payload => {
-        io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID });
-    });
+    socket.on('acceptCall', (data)=>{
+        io.to(users[data.to]).emit('callAccepted', data.signal)
+    })
 
-    socket.on("returning signal", payload => {
-        io.to(payload.callerID).emit('receiving returned signal', { signal: payload.signal, id: socket.id });
-    });
+    socket.on('close', (data)=>{
+        io.to(users[data.to]).emit('close')
+    })
 
-    socket.on('disconnect', () => {
-        const roomID = socketToRoom[socket.id];
-        let room = users[roomID];
-        if (room) {
-            room = room.filter(id => id !== socket.id);
-            users[roomID] = room;
-        }
-    });
+    socket.on('rejected', (data)=>{
+        io.to(users[data.to]).emit('rejected')
+    })
+})
 
-});
-
+const port = process.env.PORT || 8000
 
 if (process.env.PROD) {
     app.use(express.static(path.join(__dirname, './client/build')))
@@ -55,6 +60,7 @@ if (process.env.PROD) {
     })
     console.log("production!")
 }
-const port = parseInt(process.env.PORT) || 8000;
-server.listen(port, () => console.log(`Server is running on port ${port}`))
 
+server.listen(port, ()=>{
+    console.log(`Server running on port ${port}`)
+})
