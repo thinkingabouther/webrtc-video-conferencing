@@ -222,6 +222,8 @@ const Room = (props) => {
     }
 
     function leaveCall() {
+        userPeer.current.destroy();
+        userStream.current.getTracks().forEach(track => track.stop())
         history.push("/");
     }
 
