@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 
 const PeerVideoContainer = styled.div`
     padding: 1rem;
@@ -77,8 +78,10 @@ const Room = (props) => {
     const socketRef = useRef();
     const userVideo = useRef();
     const userStream = useRef();
+    const userPeer = useRef();
     const peersRef = useRef([]);
     const roomID = props.match.params.roomID;
+    const history = useHistory();
 
     let isVideoOn = true;
     let isAudioOn = true;
@@ -107,6 +110,7 @@ const Room = (props) => {
 
             socketRef.current.on("user joined", payload => {
                 const peer = addPeer(payload.signal, payload.callerID, stream);
+                userPeer.current = peer;
                 peersRef.current.push({
                     peerID: payload.callerID,
                     peer,
@@ -184,6 +188,8 @@ const Room = (props) => {
             socketRef.current.emit("sending signal", { userToSignal, callerID, signal })
         })
 
+        userPeer.current = peer;
+
         return peer;
     }
 
@@ -215,12 +221,30 @@ const Room = (props) => {
         userStream.current.getVideoTracks()[0].enabled = isVideoOn;
     }
 
-    function shareScreen() {
-
+    function leaveCall() {
+        userPeer.current.destroy();
+        userStream.current.getTracks().forEach(track => track.stop())
+        history.push("/");
     }
 
-    function leaveCall() {
+    function sendFile() {
+        console.log(userPeer.current);
+    }
 
+    function shareScreen() {
+        navigator.mediaDevices.getDisplayMedia( { cursor:true } )
+            .then(screenStream => {
+                userPeer.current.replaceTrack(userStream.current.getVideoTracks()[0],
+                                              screenStream.getVideoTracks()[0],
+                                              userStream.current);
+                userVideo.current.srcObject = screenStream;
+                screenStream.getTracks()[0].onended = () => {
+                    userPeer.current.replaceTrack(screenStream.getVideoTracks()[0],
+                                                  userStream.current.getVideoTracks()[0],
+                                                  userStream.current)
+                    userVideo.current.srcObject = userStream.current;
+                }
+            })
     }
 
     return (
@@ -238,8 +262,9 @@ const Room = (props) => {
             <ControlsContainer>
                 <button onClick={toggleMicrophone}>Toggle microphone</button>
                 <button onClick={toggleVideo}>Toggle video</button>
-                <button onClick={shareScreen}>Share screen</button>
                 <button onClick={leaveCall}>Leave call</button>
+                <button onClick={sendFile}>Send file</button>
+                <button onClick={shareScreen}>Share screen</button>
             </ControlsContainer>
         </RoomContainer>
     );
