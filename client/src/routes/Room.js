@@ -4,7 +4,14 @@ import Peer from "simple-peer";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 
-const PeerVideoContainer = styled.div`
+import microphoneIconOn from '../icons/microphoneOnIcon.png'
+import microphoneIconOff from '../icons/microphoneOffIcon.png'
+import videoIconOn from '../icons/videoOnIcon.png'
+import videoIconOff from '../icons/videoOffIcon.png'
+import shareScreenIcon from '../icons/shareScreenIcon.png'
+import leaveCallIcon from '../icons/leaveCallIcon.png'
+
+const PeersVideoContainer = styled.div`
     padding: 1rem;
     display: flex;
     height: 90vh;
@@ -15,15 +22,27 @@ const PeerVideoContainer = styled.div`
     justify-content: space-around;
 `;
 
-const PeerVideo = styled.video`
-    height: 50%;
-    width: 40%;
+const SinglePeerVideoContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    background: white;
+`
+
+const PeerVideoDescriptionContainer = styled.div`
+    background: white;
+    width: 100%;
+`
+
+const PeerVideoPlayer = styled.video`
+    height: 360px;
+    width: 640px;
     object-fit: cover;
 `;
 
 const UserVideo = styled.video`
-    height: 60%;
-    width: 40%;
+    height: 90px;
+    width: 160px;
+    object-fit: cover;
 `;
 
 const UserVideoContainer = styled.div`
@@ -38,24 +57,39 @@ const UserVideoContainer = styled.div`
 `;
 
 const ControlsContainer = styled.div`
-  position: absolute;
-  bottom: 0;
-  width: 100vw;
-  height: 5rem;
-  z-index: 1;
-  align-items: center;
-  justify-content: space-around;
-  display: flex;
-  background: lightgrey;
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
+    height: 5rem;
+    z-index: 1;
+    align-items: center;
+    justify-content: space-around;
+    display: flex;
+    background: white;
 `;
 
 const RoomContainer = styled.div`
-  background: black;
-`
+    background: black;
+`;
 
-const Video = (props) => {
+const ControlsIconContainer = styled.span`
+    padding: 10px;
+    border-radius: 50%;
+    border: 2px solid black;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    display: flex;
+    background: lightgrey;
+`;
+
+const ControlIcon = styled.img`
+    object-fit: cover;
+`;
+
+const PeerVideo = (props) => {
+    console.log(props)
     const ref = useRef();
-
     useEffect(() => {
         props.peer.on("stream", stream => {
             ref.current.srcObject = stream;
@@ -63,7 +97,10 @@ const Video = (props) => {
     }, []);
 
     return (
-        <PeerVideo playsInline autoPlay ref={ref} />
+        <SinglePeerVideoContainer>
+            <PeerVideoPlayer playsInline autoPlay ref={ref} />
+            <PeerVideoDescriptionContainer>{props.username}</PeerVideoDescriptionContainer>
+        </SinglePeerVideoContainer>
     );
 }
 
@@ -82,9 +119,10 @@ const Room = (props) => {
     const peersRef = useRef([]);
     const roomID = props.match.params.roomID;
     const history = useHistory();
+    const [connectionEstablished, setConnectionEstablished] = useState(false);
 
-    let isVideoOn = true;
-    let isAudioOn = true;
+    const [isVideoOn, setVideo] = useState(true);
+    const [isAudioOn, setAudio] = useState(true);
 
     useEffect(() => {
         socketRef.current = io.connect("/");
@@ -94,14 +132,15 @@ const Room = (props) => {
             socketRef.current.emit("join room", roomID);
             socketRef.current.on("all users", users => {
                 const peers = [];
-                users.forEach(userID => {
-                    const peer = createPeer(userID, socketRef.current.id, stream);
+                users.forEach(user => {
+                    const peer = createPeer(user.socketID, socketRef.current.id, stream);
                     peersRef.current.push({
-                        peerID: userID,
+                        peerID: user.socketID,
                         peer,
                     })
                     peers.push({
-                        peerID: userID,
+                        peerID: user.socketID,
+                        username: user.username,
                         peer,
                     });
                 })
@@ -109,6 +148,7 @@ const Room = (props) => {
             })
 
             socketRef.current.on("user joined", payload => {
+                console.log(payload);
                 const peer = addPeer(payload.signal, payload.callerID, stream);
                 userPeer.current = peer;
                 peersRef.current.push({
@@ -118,6 +158,7 @@ const Room = (props) => {
 
                 const peerObj = {
                     peerID: payload.callerID,
+                    username: payload.username,
                     peer,
                 }
 
@@ -127,6 +168,7 @@ const Room = (props) => {
             socketRef.current.on("receiving returned signal", payload => {
                 const item = peersRef.current.find(p => p.peerID === payload.id);
                 item.peer.signal(payload.signal);
+                setConnectionEstablished(true);
             });
 
             socketRef.current.on("user left", id => {
@@ -143,49 +185,19 @@ const Room = (props) => {
             initiator: true,
             trickle: false,
             config: {
-
                 iceServers: [
-                    {url:'stun:stun01.sipphone.com'},
-                    {url:'stun:stun.ekiga.net'},
-                    {url:'stun:stun.fwdnet.net'},
-                    {url:'stun:stun.ideasip.com'},
-                    {url:'stun:stun.iptel.org'},
-                    {url:'stun:stun.rixtelecom.se'},
-                    {url:'stun:stun.schlund.de'},
                     {url:'stun:stun.l.google.com:19302'},
                     {url:'stun:stun1.l.google.com:19302'},
                     {url:'stun:stun2.l.google.com:19302'},
                     {url:'stun:stun3.l.google.com:19302'},
                     {url:'stun:stun4.l.google.com:19302'},
-                    {url:'stun:stunserver.org'},
-                    {url:'stun:stun.softjoys.com'},
-                    {url:'stun:stun.voiparound.com'},
-                    {url:'stun:stun.voipbuster.com'},
-                    {url:'stun:stun.voipstunt.com'},
-                    {url:'stun:stun.voxgratia.org'},
-                    {url:'stun:stun.xten.com'},
-                    {
-                        url: 'turn:numb.viagenie.ca',
-                        credential: 'muazkh',
-                        username: 'webrtc@live.com'
-                    },
-                    {
-                        url: 'turn:192.158.29.39:3478?transport=udp',
-                        credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-                        username: '28224511:1379330808'
-                    },
-                    {
-                        url: 'turn:192.158.29.39:3478?transport=tcp',
-                        credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-                        username: '28224511:1379330808'
-                    }
                 ]
             },
             stream: stream,
         });
 
         peer.on("signal", signal => {
-            socketRef.current.emit("sending signal", { userToSignal, callerID, signal })
+            socketRef.current.emit("sending signal", { userToSignal, callerID, signal, roomID })
         })
 
         userPeer.current = peer;
@@ -205,33 +217,33 @@ const Room = (props) => {
         })
 
         peer.signal(incomingSignal);
-
+        setConnectionEstablished(true);
         return peer;
     }
 
     function toggleMicrophone() {
-        isAudioOn = !isAudioOn;
-        console.log(userStream.current)
+        setAudio(!isAudioOn);
         userStream.current.getAudioTracks()[0].enabled = isAudioOn;
     }
 
     function toggleVideo() {
-        isVideoOn = !isVideoOn;
-        console.log(userStream.current)
+        setVideo(!isVideoOn)
         userStream.current.getVideoTracks()[0].enabled = isVideoOn;
     }
 
     function leaveCall() {
-        userPeer.current.destroy();
-        userStream.current.getTracks().forEach(track => track.stop())
+        if (connectionEstablished) {
+            userPeer.current.destroy();
+            userStream.current.getTracks().forEach(track => track.stop())
+        }
         history.push("/");
     }
 
-    function sendFile() {
-        console.log(userPeer.current);
-    }
-
     function shareScreen() {
+        if (!connectionEstablished) {
+            alert("connection was not established");
+            return;
+        }
         navigator.mediaDevices.getDisplayMedia( { cursor:true } )
             .then(screenStream => {
                 userPeer.current.replaceTrack(userStream.current.getVideoTracks()[0],
@@ -247,24 +259,71 @@ const Room = (props) => {
             })
     }
 
+    const AudioControl = () => {
+        if (isAudioOn) {
+            return (
+                <ControlsIconContainer onClick={() => toggleMicrophone()}>
+                    <ControlIcon src={microphoneIconOn} alt={"Mute microphone"}/>
+                </ControlsIconContainer>
+            );
+        } else {
+            return (
+                <ControlsIconContainer onClick={() => toggleMicrophone()}>
+                    <ControlIcon src={microphoneIconOff} alt={"Unmute microphone"}/>
+                </ControlsIconContainer>
+            );
+        }
+    }
+
+    const VideoControl = () => {
+        if (isVideoOn) {
+            return (
+                <ControlsIconContainer onClick={() => toggleVideo()}>
+                    <ControlIcon src={videoIconOn} alt={"Stop video"}/>
+                </ControlsIconContainer>
+            );
+        } else {
+            return (
+                <ControlsIconContainer onClick={() => toggleVideo()}>
+                    <ControlIcon src={videoIconOff} alt={"Start video"}/>
+                </ControlsIconContainer>
+            );
+        }
+    }
+
+    const ShareScreenControl = () => {
+        return (
+            <ControlsIconContainer onClick={() => shareScreen()}>
+                <ControlIcon src={shareScreenIcon} alt={"Share screen"}/>
+            </ControlsIconContainer>
+        );
+    }
+
+    const LeaveCallControl = () => {
+        return (
+            <ControlsIconContainer onClick={() => leaveCall()}>
+                <ControlIcon src={leaveCallIcon} alt={"Leave call"}/>
+            </ControlsIconContainer>
+        );
+    }
+
     return (
         <RoomContainer>
             <UserVideoContainer>
                 <UserVideo muted ref={userVideo} autoPlay playsInline />
             </UserVideoContainer>
-            <PeerVideoContainer>
-                {peers.map((peer) => {
+            <PeersVideoContainer>
+                {peers.map(peer => {
                     return (
-                        <Video key={peer.peerID} peer={peer.peer} />
+                        <PeerVideo key={peer.peerID} peer={peer.peer} username={peer.username}/>
                     );
                 })}
-            </PeerVideoContainer>
+            </PeersVideoContainer>
             <ControlsContainer>
-                <button onClick={toggleMicrophone}>Toggle microphone</button>
-                <button onClick={toggleVideo}>Toggle video</button>
-                <button onClick={leaveCall}>Leave call</button>
-                <button onClick={sendFile}>Send file</button>
-                <button onClick={shareScreen}>Share screen</button>
+                <AudioControl/>
+                <VideoControl/>
+                <ShareScreenControl/>
+                <LeaveCallControl/>
             </ControlsContainer>
         </RoomContainer>
     );

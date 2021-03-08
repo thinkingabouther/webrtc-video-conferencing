@@ -5,31 +5,42 @@ const server = http.createServer(app);
 const socket = require("socket.io");
 const io = socket(server);
 const path = require("path");
-const users = {};
+const rooms = {};
 
 const socketToRoom = {};
 
 io.on('connection', socket => {
     console.log(`socket with id ${socket.id} connected!`)
     socket.on("join room", roomID => {
-        if (users[roomID]) {
-            const length = users[roomID].length;
+        if (rooms[roomID]) {
+            const length = rooms[roomID].length;
             if (length === 4) {
                 socket.emit("room full");
                 return;
             }
-            users[roomID].push(socket.id);
+            rooms[roomID].push({
+                socketID: socket.id,
+                username: socket.id
+            });
         } else {
-            users[roomID] = [socket.id];
+            rooms[roomID] = [{
+                socketID: socket.id,
+                username: socket.id
+            }];
         }
         socketToRoom[socket.id] = roomID;
-        const usersInThisRoom = users[roomID].filter(id => id !== socket.id);
+        const usersInThisRoom = rooms[roomID].filter(user => user.socketID !== socket.id);
 
         socket.emit("all users", usersInThisRoom);
     });
 
     socket.on("sending signal", payload => {
-        io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID });
+        const user = rooms[payload.roomID].find(user => user.socketID === payload.callerID)
+        io.to(payload.userToSignal).emit('user joined', {
+            signal: payload.signal,
+            callerID: payload.callerID,
+            username: user.username
+        });
     });
 
     socket.on("returning signal", payload => {
@@ -38,10 +49,10 @@ io.on('connection', socket => {
 
     socket.on('disconnect', () => {
         const roomID = socketToRoom[socket.id];
-        let room = users[roomID];
+        let room = rooms[roomID];
         if (room) {
             room = room.filter(id => id !== socket.id);
-            users[roomID] = room;
+            rooms[roomID] = room;
         }
         socket.broadcast.emit("user left", socket.id)
     });

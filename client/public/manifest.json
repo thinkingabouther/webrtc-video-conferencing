@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "WebRTC conference",
+  "name": "WebRTC video conferencing",
   "icons": [
     {
       "src": "favicon.ico",
