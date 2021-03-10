@@ -1,108 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
-import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
-import microphoneIconOn from '../icons/microphoneOnIcon.png'
-import microphoneIconOff from '../icons/microphoneOffIcon.png'
-import videoIconOn from '../icons/videoOnIcon.png'
-import videoIconOff from '../icons/videoOffIcon.png'
-import shareScreenIcon from '../icons/shareScreenIcon.png'
-import leaveCallIcon from '../icons/leaveCallIcon.png'
+import {
+    ControlsContainer,
+    PeersVideoContainer,
+    RoomContainer,
+    UserVideo,
+    UserVideoContainer
+} from "../styled-components";
 
-const PeersVideoContainer = styled.div`
-    padding: 1rem;
-    display: flex;
-    height: 90vh;
-    width: 90vw;
-    margin: auto;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-around;
-`;
-
-const SinglePeerVideoContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    background: white;
-`
-
-const PeerVideoDescriptionContainer = styled.div`
-    background: white;
-    width: 100%;
-`
-
-const PeerVideoPlayer = styled.video`
-    height: 360px;
-    width: 640px;
-    object-fit: cover;
-`;
-
-const UserVideo = styled.video`
-    height: 90px;
-    width: 160px;
-    object-fit: cover;
-`;
-
-const UserVideoContainer = styled.div`
-    max-width: 30rem;
-    max-height: 30rem;
-    height: auto;
-    width: auto;
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    z-index: 1;
-`;
-
-const ControlsContainer = styled.div`
-    position: absolute;
-    bottom: 0;
-    width: 100vw;
-    height: 5rem;
-    z-index: 1;
-    align-items: center;
-    justify-content: space-around;
-    display: flex;
-    background: white;
-`;
-
-const RoomContainer = styled.div`
-    background: black;
-`;
-
-const ControlsIconContainer = styled.span`
-    padding: 10px;
-    border-radius: 50%;
-    border: 2px solid black;
-    width: 2rem;
-    height: 2rem;
-    cursor: pointer;
-    display: flex;
-    background: lightgrey;
-`;
-
-const ControlIcon = styled.img`
-    object-fit: cover;
-`;
-
-const PeerVideo = (props) => {
-    console.log(props)
-    const ref = useRef();
-    useEffect(() => {
-        props.peer.on("stream", stream => {
-            ref.current.srcObject = stream;
-        })
-    }, []);
-
-    return (
-        <SinglePeerVideoContainer>
-            <PeerVideoPlayer playsInline autoPlay ref={ref} />
-            <PeerVideoDescriptionContainer>{props.username}</PeerVideoDescriptionContainer>
-        </SinglePeerVideoContainer>
-    );
-}
+import PeerVideo from "./PeerVideo";
+import VideoControl from "./VideoControl";
+import AudioControl from "./AudioControl";
+import LeaveCallControl from "./LeaveCallControl";
+import ShareScreenControl from "./ShareScreenControl";
 
 
 const videoConstraints = {
@@ -121,8 +34,8 @@ const Room = (props) => {
     const history = useHistory();
     const [connectionEstablished, setConnectionEstablished] = useState(false);
 
-    const [isVideoOn, setVideo] = useState(true);
-    const [isAudioOn, setAudio] = useState(true);
+    const [isVideoOn, setVideo] = useState(false);
+    const [isAudioOn, setAudio] = useState(false);
 
     useEffect(() => {
         socketRef.current = io.connect("/");
@@ -227,7 +140,7 @@ const Room = (props) => {
     }
 
     function toggleVideo() {
-        setVideo(!isVideoOn)
+        setVideo(!isVideoOn, () => {})
         userStream.current.getVideoTracks()[0].enabled = isVideoOn;
     }
 
@@ -259,54 +172,6 @@ const Room = (props) => {
             })
     }
 
-    const AudioControl = () => {
-        if (isAudioOn) {
-            return (
-                <ControlsIconContainer onClick={() => toggleMicrophone()}>
-                    <ControlIcon src={microphoneIconOn} alt={"Mute microphone"}/>
-                </ControlsIconContainer>
-            );
-        } else {
-            return (
-                <ControlsIconContainer onClick={() => toggleMicrophone()}>
-                    <ControlIcon src={microphoneIconOff} alt={"Unmute microphone"}/>
-                </ControlsIconContainer>
-            );
-        }
-    }
-
-    const VideoControl = () => {
-        if (isVideoOn) {
-            return (
-                <ControlsIconContainer onClick={() => toggleVideo()}>
-                    <ControlIcon src={videoIconOn} alt={"Stop video"}/>
-                </ControlsIconContainer>
-            );
-        } else {
-            return (
-                <ControlsIconContainer onClick={() => toggleVideo()}>
-                    <ControlIcon src={videoIconOff} alt={"Start video"}/>
-                </ControlsIconContainer>
-            );
-        }
-    }
-
-    const ShareScreenControl = () => {
-        return (
-            <ControlsIconContainer onClick={() => shareScreen()}>
-                <ControlIcon src={shareScreenIcon} alt={"Share screen"}/>
-            </ControlsIconContainer>
-        );
-    }
-
-    const LeaveCallControl = () => {
-        return (
-            <ControlsIconContainer onClick={() => leaveCall()}>
-                <ControlIcon src={leaveCallIcon} alt={"Leave call"}/>
-            </ControlsIconContainer>
-        );
-    }
-
     return (
         <RoomContainer>
             <UserVideoContainer>
@@ -320,10 +185,10 @@ const Room = (props) => {
                 })}
             </PeersVideoContainer>
             <ControlsContainer>
-                <AudioControl/>
-                <VideoControl/>
-                <ShareScreenControl/>
-                <LeaveCallControl/>
+                <AudioControl isAudioOn={isAudioOn} toggleMicrophone={toggleMicrophone} />
+                <VideoControl isVideoOn={isVideoOn} toggleVideo={toggleVideo} />
+                <ShareScreenControl shareScreen={shareScreen} />
+                <LeaveCallControl leaveCall={leaveCall} />
             </ControlsContainer>
         </RoomContainer>
     );
