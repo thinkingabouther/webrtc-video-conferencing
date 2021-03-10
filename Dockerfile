@@ -1,12 +1,13 @@
 FROM node:14-alpine
 
-ADD yarn.lock package.json /app/
-WORKDIR /app
+ADD ./server/yarn.lock ./server/package.json server/
+WORKDIR server
 RUN yarn install
-ADD ./client/yarn.lock ./client/package.json /app/client/
+ADD ./client/yarn.lock ./client/package.json client/
 RUN cd ./client && yarn
 
-COPY . /app
+COPY . .
 RUN cd ./client && yarn build
 ENV PROD=true
+WORKDIR server
 CMD ["npm", "start"]
