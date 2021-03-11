@@ -1,6 +1,6 @@
 const socket = require("socket.io");
 
-WebRTCSocketService = (server) => {
+module.exports = (server) => {
     const rooms = {};
     const socketToRoom = {};
     const io = socket(server);
@@ -54,5 +54,3 @@ WebRTCSocketService = (server) => {
 
     });
 }
-
-exports.WebRTCSocketService = WebRTCSocketService
