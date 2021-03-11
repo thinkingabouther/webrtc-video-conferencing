@@ -93,7 +93,7 @@ const Room = (props) => {
         })
     }, []);
 
-    function createPeer(userToSignal, callerID, stream) {
+    const createPeer = (userToSignal, callerID, stream) => {
         const peer = new Peer({
             initiator: true,
             trickle: false,
@@ -118,7 +118,7 @@ const Room = (props) => {
         return peer;
     }
 
-    function addPeer(incomingSignal, callerID, stream) {
+    const addPeer = (incomingSignal, callerID, stream) => {
         const peer = new Peer({
             initiator: false,
             trickle: false,
@@ -134,17 +134,17 @@ const Room = (props) => {
         return peer;
     }
 
-    function toggleMicrophone() {
+    const toggleMicrophone = () => {
         setAudio(!isAudioOn);
         userStream.current.getAudioTracks()[0].enabled = isAudioOn;
     }
 
-    function toggleVideo() {
-        setVideo(!isVideoOn, () => {})
+    const toggleVideo = () => {
+        setVideo(!isVideoOn)
         userStream.current.getVideoTracks()[0].enabled = isVideoOn;
     }
 
-    function leaveCall() {
+    const leaveCall = () => {
         if (connectionEstablished) {
             userPeer.current.destroy();
             userStream.current.getTracks().forEach(track => track.stop())
@@ -152,7 +152,7 @@ const Room = (props) => {
         history.push("/");
     }
 
-    function shareScreen() {
+    const shareScreen = () => {
         if (!connectionEstablished) {
             alert("connection was not established");
             return;

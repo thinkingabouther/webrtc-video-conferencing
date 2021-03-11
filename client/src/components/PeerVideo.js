@@ -2,7 +2,6 @@ import React, {useEffect, useRef} from "react";
 import {PeerVideoDescriptionContainer, PeerVideoPlayer, SinglePeerVideoContainer} from "../styled-components";
 
 const PeerVideo = (props) => {
-    console.log(props)
     const ref = useRef();
     useEffect(() => {
         props.peer.on("stream", stream => {
