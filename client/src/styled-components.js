@@ -43,6 +43,8 @@ export const UserVideoContainer = styled.div`
     top: 1rem;
     left: 1rem;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
 `;
 
 export const ControlsContainer = styled.div`
