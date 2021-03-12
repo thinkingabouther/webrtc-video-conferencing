@@ -5,7 +5,7 @@ import {useHistory} from "react-router-dom";
 
 import {
     ControlsContainer,
-    PeersVideoContainer,
+    PeersVideoContainer, PeerVideoDescriptionContainer,
     RoomContainer,
     UserVideo,
     UserVideoContainer
@@ -16,6 +16,7 @@ import VideoControl from "./VideoControl";
 import AudioControl from "./AudioControl";
 import LeaveCallControl from "./LeaveCallControl";
 import ShareScreenControl from "./ShareScreenControl";
+import {AuthConsumer} from "./AuthProvider";
 
 
 const videoConstraints = {
@@ -149,7 +150,7 @@ const Room = (props) => {
             userPeer.current.destroy();
             userStream.current.getTracks().forEach(track => track.stop())
         }
-        history.push("/");
+        history.replace("/");
     }
 
     const shareScreen = () => {
@@ -173,24 +174,29 @@ const Room = (props) => {
     }
 
     return (
-        <RoomContainer>
-            <UserVideoContainer>
-                <UserVideo muted ref={userVideo} autoPlay playsInline />
-            </UserVideoContainer>
-            <PeersVideoContainer>
-                {peers.map(peer => {
-                    return (
-                        <PeerVideo key={peer.peerID} peer={peer.peer} username={peer.username}/>
-                    );
-                })}
-            </PeersVideoContainer>
-            <ControlsContainer>
-                <AudioControl isAudioOn={isAudioOn} toggleMicrophone={toggleMicrophone} />
-                <VideoControl isVideoOn={isVideoOn} toggleVideo={toggleVideo} />
-                <ShareScreenControl shareScreen={shareScreen} />
-                <LeaveCallControl leaveCall={leaveCall} />
-            </ControlsContainer>
-        </RoomContainer>
+        <AuthConsumer>
+        {context => (
+            <RoomContainer>
+                <UserVideoContainer>
+                    <UserVideo muted ref={userVideo} autoPlay playsInline/>
+                    <PeerVideoDescriptionContainer>{context.user ? context.user.name : ""}</PeerVideoDescriptionContainer>
+                </UserVideoContainer>
+                <PeersVideoContainer>
+                    {peers.map(peer => {
+                        return (
+                            <PeerVideo key={peer.peerID} peer={peer.peer} username={peer.username}/>
+                        );
+                    })}
+                </PeersVideoContainer>
+                <ControlsContainer>
+                    <AudioControl isAudioOn={isAudioOn} toggleMicrophone={toggleMicrophone}/>
+                    <VideoControl isVideoOn={isVideoOn} toggleVideo={toggleVideo}/>
+                    <ShareScreenControl shareScreen={shareScreen}/>
+                    <LeaveCallControl leaveCall={leaveCall}/>
+                </ControlsContainer>
+            </RoomContainer>
+            )}
+        </AuthConsumer>
     );
 };
 
