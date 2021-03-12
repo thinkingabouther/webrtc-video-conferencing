@@ -8,12 +8,12 @@ const routes = require('./routes');
 const app = express();
 
 if (process.env.PROD) {
-    app.use(express.static(path.join(__dirname, '../client/build')))
+    app.use(express.static(path.join(__dirname, '../../client/build')))
     app.get("/", (req, res) => {
-        res.sendFile(path.join(__dirname, '../client/build/index.html'))
+        res.sendFile(path.join(__dirname, '../../client/build/index.html'))
     })
     app.get("/room/:roomID", (req, res) => {
-        res.sendFile(path.join(__dirname, '../client/build/index.html'))
+        res.sendFile(path.join(__dirname, '../../client/build/index.html'))
     })
     console.log("production!")
 }
