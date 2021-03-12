@@ -10,7 +10,7 @@ const CreateRoom = (props) => {
     }
 
     const handleLogin = async googleData => {
-        const res = await fetch("/api/auth", {
+        const res = await fetch("/api/auth/login", {
             method: "POST",
             body: JSON.stringify({
                 token: googleData.tokenId

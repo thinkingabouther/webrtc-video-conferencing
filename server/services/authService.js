@@ -4,11 +4,12 @@ const config = require("../config.js")
 const client = new OAuth2Client(config.oauth.clientId)
 const oauthConfig = config.oauth
 
-exports.auth = async (token) => {
+exports.login = async (token) => {
     const ticket = await client.verifyIdToken({
         idToken: token,
         audience: oauthConfig.clientId
     });
     const {name, email} = ticket.getPayload();
-    return await userRepository.save({name, email})
+    const existingUser = await userRepository.findByEmail(email);
+    return existingUser ? existingUser : await userRepository.save({name, email})
 }
