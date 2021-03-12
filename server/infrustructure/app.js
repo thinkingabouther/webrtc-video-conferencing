@@ -1,9 +1,9 @@
 const express = require("express");
 const bodyparser = require("body-parser");
-const sessionMiddleware = require("./middleware/sessionMiddleware");
-const loginMiddleware = require("./middleware/loginMiddleware");
+const sessionMiddleware = require("../middleware/sessionMiddleware");
+const loginMiddleware = require("../middleware/loginMiddleware");
 const path = require("path");
-const routes = require('./routes/apiRoutes');
+const routes = require('./routes');
 
 const app = express();
 

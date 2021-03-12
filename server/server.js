@@ -1,6 +1,6 @@
 const http = require("http");
-const socketServer = require("./socketServer.js");
-const app = require("./app.js");
+const socketServer = require("./infrustructure/socketServer.js");
+const app = require("./infrustructure/app.js");
 
 const server = http.createServer(app);
 socketServer(server);

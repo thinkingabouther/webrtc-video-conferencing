@@ -10,5 +10,9 @@ module.exports = {
 
     async findById(id) {
         return await collection.firstExample({_id: id});
+    },
+
+    async findByEmail(email) {
+        return await collection.firstExample({email: email})
     }
 }
