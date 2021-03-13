@@ -1,8 +1,10 @@
 const dbConnection = require("./dbConnection.js");
 const userConnectionCollectionName = "userConnections";
-const arangojs = require("arangojs")
+const friendListGraphName = "friendsList";
+const arangojs = require("arangojs");
 const aql = arangojs.aql;
 const userConnectionsCollection = dbConnection.collection(userConnectionCollectionName);
+
 
 exports.addConnection = async (_id1, _id2, roomID) => {
     const connection1 = {
@@ -26,4 +28,12 @@ exports.findConnection = async (_id1, _id2) => {
     RETURN connection`);
     const result = await cursor.all();
     return result.length === 0 ? null : result[0];
+}
+
+exports.findFriends = async (user) => {
+    const cursor = await dbConnection.query(aql`
+    for user, edge in 1..1 outbound ${user._id} 
+    GRAPH ${friendListGraphName}
+    RETURN {user: user, edge: edge}`)
+    return await cursor.all();
 }

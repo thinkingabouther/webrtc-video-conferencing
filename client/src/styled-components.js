@@ -106,7 +106,7 @@ export const JoinRoomContainer = styled.div`
     
 `;
 
-export const UserInfoContainer = styled.div`
+export const AddFriendContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
@@ -116,4 +116,9 @@ export const HomeContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+`;
+
+export const UserInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
