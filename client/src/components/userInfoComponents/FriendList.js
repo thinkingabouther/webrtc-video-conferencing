@@ -12,12 +12,12 @@ const FriendList = () => {
     const getData = async () => {
         const response = await fetch(friendsEndpoint);
         const json = await response.json();
-        console.log("fetch")
-        console.log(json);
-        console.log(response.status)
+        // console.log("fetch")
+        // console.log(json);
+        // console.log(response.status)
         if (response.status === 200) setDataFetched(true);
-        console.log(data);
-        console.log(dataFetched);
+        // console.log(data);
+        // console.log(dataFetched);
         return json;
     }
 
@@ -43,19 +43,23 @@ const FriendList = () => {
         }
     }
 
+    console.log(data)
+
     return (
-        <div>
+        <>
             <AddFriendContainer>
                 <input placeholder={"Input email of your friend"} value={userEmail} onChange={handleInputChange}/>
                 <span>{error}</span>
                 <button onClick={addFriend}>Add friend!</button>
             </AddFriendContainer>
-            <div>
-            {!dataFetched ? "No friends" : data.forEach(friend => (
-                <div key={friend.roomID}>{friend.roomID}</div>
-            ))}
-            </div>
-        </div>
+            <>
+                {!data && <p>No friends</p>}
+                {data && data.message && <p>{data.message}</p>}
+                {data && data.length > 0 && data.map(friend => (
+                    <div key={friend.roomID}>{friend.roomID}</div>
+                ))}
+            </>
+        </>
     );
 
 }
