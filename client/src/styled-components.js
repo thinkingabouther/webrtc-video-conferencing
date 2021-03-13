@@ -82,7 +82,7 @@ export const AuthComponentContainer = styled.div`
   position: absolute;
   top: 1rem;
   right: 1rem;
-`
+`;
 
 export const LogoutIconContainer = styled.span`
   padding: 10px;
@@ -92,7 +92,7 @@ export const LogoutIconContainer = styled.span`
   height: 1rem;
   cursor: pointer;
   display: flex;
-  background: #BB0000;
+  background: #bb0000;
   margin: 3px;
 `;
 
@@ -102,9 +102,7 @@ export const LogoutContainer = styled.div`
   align-items: center;
 `;
 
-export const JoinRoomContainer = styled.div`
-    
-`;
+export const JoinRoomContainer = styled.div``;
 
 export const AddFriendContainer = styled.div`
   display: flex;
