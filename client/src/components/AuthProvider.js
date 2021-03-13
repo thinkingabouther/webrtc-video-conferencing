@@ -1,10 +1,9 @@
-import React from "react"
-import useSWR from "swr"
+import React, {useState} from "react"
 const { Provider, Consumer } = React.createContext(false);
 
 const AuthProvider = (props) => {
 
-    const { data, error, mutate } = useSWR(`/api/auth/me`)
+    const [data, setData] = useState(null)
 
     const googleLogIn = async googleData => {
         const res = await fetch("/api/auth/login", {
@@ -16,9 +15,8 @@ const AuthProvider = (props) => {
                 "Content-Type": "application/json"
             }
         })
-        const data = await res.json()
-        if(data.error) throw new Error(data.error)
-        mutate()
+        const userData = await res.json();
+        setData(userData)
     }
 
     const logOut = async () => {
@@ -26,14 +24,13 @@ const AuthProvider = (props) => {
             method: "DELETE"
         })
         console.log("logout")
+        setData(null);
         window.location.reload(false);
-        mutate()
     }
 
     return(
         <Provider value={{
             user: data,
-            error: error,
             googleLogIn: googleLogIn,
             logOut: logOut
         }} {...props}/>

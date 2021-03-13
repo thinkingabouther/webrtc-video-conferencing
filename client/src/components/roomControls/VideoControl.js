@@ -1,6 +1,6 @@
-import {ControlIcon, ControlsIconContainer} from "../styled-components";
-import videoIconOff from "../icons/videoOffIcon.png";
-import videoIconOn from "../icons/videoOnIcon.png";
+import {ControlIcon, ControlsIconContainer} from "../../styled-components";
+import videoIconOff from "../../icons/videoOffIcon.png";
+import videoIconOn from "../../icons/videoOnIcon.png";
 import React from "react";
 
 const VideoControl = ({isVideoOn, toggleVideo}) => (

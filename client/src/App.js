@@ -2,15 +2,20 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import CreateRoom from "./components/CreateRoom";
 import Room from "./components/Room";
+import {AuthConsumer} from "./components/AuthProvider";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route path="/" exact component={CreateRoom} />
-        <Route path="/room/:roomID" component={Room} />
-      </Switch>
-    </BrowserRouter>
+      <AuthConsumer>
+      {context => (
+        <BrowserRouter>
+          <Switch>
+            <Route path="/" exact component={CreateRoom} />
+            <Route path="/room/:roomID" component={() => <Room user={context.user}/> } />
+          </Switch>
+        </BrowserRouter>
+      )}
+      </AuthConsumer>
   );
 }
 
