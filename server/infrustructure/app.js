@@ -2,6 +2,8 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const sessionMiddleware = require("../middleware/sessionMiddleware");
 const loginMiddleware = require("../middleware/loginMiddleware");
+const checkLoginMiddleware = require("../middleware/checkLoginMiddleware");
+
 const path = require("path");
 const routes = require("./routes");
 
@@ -21,6 +23,7 @@ if (process.env.PROD) {
 app.use(bodyparser.json());
 sessionMiddleware(app);
 loginMiddleware(app);
+checkLoginMiddleware(app)
 routes(app);
 
 module.exports = app;
