@@ -3,7 +3,7 @@ import {
   VideoDescriptionContainer,
   PeerVideoPlayer,
   SinglePeerVideoContainer,
-} from "../styled-components";
+} from "../../styled-components";
 
 const PeerVideo = (props) => {
   const ref = useRef();
