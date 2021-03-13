@@ -1,13 +1,12 @@
-import {UserInfoContainer} from "../../styled-components";
+import { UserInfoContainer } from "../../styled-components";
 import FriendsList from "../userInfoComponents/FriendsList";
 
 const UserInfo = () => {
+  return (
+    <UserInfoContainer>
+      <FriendsList />
+    </UserInfoContainer>
+  );
+};
 
-    return (
-        <UserInfoContainer>
-            <FriendsList/>
-        </UserInfoContainer>
-    )
-}
-
-export default UserInfo
+export default UserInfo;

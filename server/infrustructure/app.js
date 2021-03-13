@@ -23,7 +23,7 @@ if (process.env.PROD) {
 app.use(bodyparser.json());
 sessionMiddleware(app);
 loginMiddleware(app);
-checkLoginMiddleware(app)
+checkLoginMiddleware(app);
 routes(app);
 
 module.exports = app;

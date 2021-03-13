@@ -1,25 +1,30 @@
 const userConnectionRepository = require("../dbal/userConnectionRepository");
 const userRepository = require("../dbal/userRepository");
-const uuid = require("uuid").v1
+const uuid = require("uuid").v1;
 
 exports.addFriend = async (user, friendEmail) => {
-    const friend = await userRepository.findByEmail(friendEmail);
-    if (!friend) throw new Error("user not found");
+  const friend = await userRepository.findByEmail(friendEmail);
+  if (!friend) throw new Error("user not found");
 
-    const existingEdge = await userConnectionRepository.findConnection(user._id, friend._id);
-    if (existingEdge) throw new Error("Edge already exists");
+  const existingEdge = await userConnectionRepository.findConnection(
+    user._id,
+    friend._id
+  );
+  if (existingEdge) throw new Error("Edge already exists");
 
-    const id = uuid();
-    await userConnectionRepository.addConnection(user._id, friend._id, id);
-}
+  const id = uuid();
+  await userConnectionRepository.addConnection(user._id, friend._id, id);
+};
 
 exports.findFriends = async (user) => {
-    const friends = await userConnectionRepository.findFriends(user);
-    if (friends.length === 0) return null;
-    const friendsWithRooms = [];
-    friends.forEach(friend => friendsWithRooms.push({
-        name: friend.user.name,
-        roomID: friend.edge.roomID
-    }))
-    return friendsWithRooms;
-}
+  const friends = await userConnectionRepository.findFriends(user);
+  if (friends.length === 0) return null;
+  const friendsWithRooms = [];
+  friends.forEach((friend) =>
+    friendsWithRooms.push({
+      name: friend.user.name,
+      roomID: friend.edge.roomID,
+    })
+  );
+  return friendsWithRooms;
+};
