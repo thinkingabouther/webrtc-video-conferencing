@@ -1,11 +1,11 @@
 import {UserInfoContainer} from "../../styled-components";
-import FriendList from "../userInfoComponents/FriendList";
+import FriendsList from "../userInfoComponents/FriendsList";
 
 const UserInfo = () => {
 
     return (
         <UserInfoContainer>
-            <FriendList/>
+            <FriendsList/>
         </UserInfoContainer>
     )
 }

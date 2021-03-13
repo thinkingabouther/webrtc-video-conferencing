@@ -4,24 +4,10 @@ import {useState} from "react";
 
 const friendsEndpoint = "api/user/friends";
 
-const FriendList = () => {
+const FriendsList = () => {
     const [userEmail, setUserEmail] = useState();
     const [error, setError] = useState('')
-    const [dataFetched, setDataFetched] = useState(false);
-
-    const getData = async () => {
-        const response = await fetch(friendsEndpoint);
-        const json = await response.json();
-        // console.log("fetch")
-        // console.log(json);
-        // console.log(response.status)
-        if (response.status === 200) setDataFetched(true);
-        // console.log(data);
-        // console.log(dataFetched);
-        return json;
-    }
-
-    const { data } = useSWR(friendsEndpoint, getData)
+    const { data, mutate} = useSWR(friendsEndpoint, { refreshInterval: 100 })
 
     const handleInputChange = (e) => {
         setUserEmail(e.target.value)
@@ -41,9 +27,8 @@ const FriendList = () => {
             const json = await res.json();
             setError(json.message)
         }
+        mutate();
     }
-
-    console.log(data)
 
     return (
         <>
@@ -53,15 +38,13 @@ const FriendList = () => {
                 <button onClick={addFriend}>Add friend!</button>
             </AddFriendContainer>
             <>
-                {!data && <p>No friends</p>}
-                {data && data.message && <p>{data.message}</p>}
+                {(!data || (data.message)) && <p>Your friends will appear here</p>}
                 {data && data.length > 0 && data.map(friend => (
-                    <div key={friend.roomID}>{friend.roomID}</div>
+                    <div key={friend.roomID}>{friend.name}</div>
                 ))}
             </>
         </>
     );
-
 }
 
-export default FriendList
+export default FriendsList

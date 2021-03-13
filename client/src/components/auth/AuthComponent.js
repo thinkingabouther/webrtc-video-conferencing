@@ -7,6 +7,7 @@ import {AuthComponentContainer, ControlIcon, LogoutContainer, LogoutIconContaine
 import logoutIcon from "../../icons/logoutIcon.png";
 
 const AuthComponent = (props) => {
+    console.log(props);
     if (!props.user)
         return (
             <AuthComponentContainer>
