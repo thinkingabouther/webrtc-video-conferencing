@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
+    - name: Prettier Action
+      uses: creyD/prettier_action@v3.3
+      with:
+        same_commit: True
+        only_changed: True
     - uses: actions/checkout@v1
     - name: Build and deploy the Docker image for server
       env:
