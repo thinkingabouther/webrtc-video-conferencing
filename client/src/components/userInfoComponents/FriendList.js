@@ -51,7 +51,7 @@ const FriendList = () => {
                 <button onClick={addFriend}>Add friend!</button>
             </AddFriendContainer>
             <div>
-            {!dataFetched ? "No friends" : data.map(friend => (
+            {!dataFetched ? "No friends" : data.forEach(friend => (
                 <div key={friend.roomID}>{friend.roomID}</div>
             ))}
             </div>
