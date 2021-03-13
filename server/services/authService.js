@@ -11,6 +11,7 @@ exports.login = async (token) => {
   });
   const { name, email } = ticket.getPayload();
   const existingUser = await userRepository.findByEmail(email);
+  console.log(existingUser);
   return existingUser
     ? existingUser
     : await userRepository.save({ name, email });

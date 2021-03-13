@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import CreateRoom from "./components/CreateRoom";
+import Home from "./components/Home";
 import Room from "./components/Room";
 import { AuthConsumer } from "./components/AuthProvider";
 
@@ -10,7 +10,7 @@ function App() {
       {(context) => (
         <BrowserRouter>
           <Switch>
-            <Route path="/" exact component={CreateRoom} />
+            <Route path="/" exact component={Home} />
             <Route
               path="/room/:roomID"
               component={() => <Room user={context.user} />}

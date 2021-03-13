@@ -77,3 +77,27 @@ export const ControlsIconContainer = styled.span`
 export const ControlIcon = styled.img`
   object-fit: cover;
 `;
+
+export const AuthComponentContainer = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+`
+
+export const LogoutIconContainer = styled.span`
+  padding: 10px;
+  border-radius: 50%;
+  border: 1px solid black;
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  display: flex;
+  background: #BB0000;
+  margin: 3px;
+`;
+
+export const LogoutContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`

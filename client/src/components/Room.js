@@ -51,7 +51,7 @@ const Room = (props) => {
           roomID: roomID,
           username: props.user ? props.user.name : "Guest",
         };
-        console.log(`userInfo: ${connectionInfo.user}`);
+        console.log(`userInfo: ${connectionInfo.username}`);
         socketRef.current.emit("join room", connectionInfo);
         socketRef.current.on("all users", (users) => {
           const peers = [];
