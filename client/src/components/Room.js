@@ -5,17 +5,17 @@ import {useHistory} from "react-router-dom";
 
 import {
     ControlsContainer,
-    PeersVideoContainer, PeerVideoDescriptionContainer,
+    PeersVideoContainer, VideoDescriptionContainer,
     RoomContainer,
     UserVideo,
     UserVideoContainer
 } from "../styled-components";
 
 import PeerVideo from "./PeerVideo";
-import VideoControl from "./VideoControl";
-import AudioControl from "./AudioControl";
-import LeaveCallControl from "./LeaveCallControl";
-import ShareScreenControl from "./ShareScreenControl";
+import VideoControl from "./roomControls/VideoControl";
+import AudioControl from "./roomControls/AudioControl";
+import LeaveCallControl from "./roomControls/LeaveCallControl";
+import ShareScreenControl from "./roomControls/ShareScreenControl";
 import {AuthConsumer} from "./AuthProvider";
 
 
@@ -31,7 +31,7 @@ const Room = (props) => {
     const userStream = useRef();
     const userPeer = useRef();
     const peersRef = useRef([]);
-    const roomID = props.match.params.roomID;
+    const roomID = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
     const history = useHistory();
     const [connectionEstablished, setConnectionEstablished] = useState(false);
 
@@ -43,7 +43,12 @@ const Room = (props) => {
         navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true }).then(stream => {
             userVideo.current.srcObject = stream;
             userStream.current = stream;
-            socketRef.current.emit("join room", roomID);
+            const connectionInfo = {
+                roomID: roomID,
+                username: props.user ? props.user.name : "Guest"
+            }
+            console.log(`userInfo: ${connectionInfo.user}`);
+            socketRef.current.emit("join room", connectionInfo);
             socketRef.current.on("all users", users => {
                 const peers = [];
                 users.forEach(user => {
@@ -179,7 +184,7 @@ const Room = (props) => {
             <RoomContainer>
                 <UserVideoContainer>
                     <UserVideo muted ref={userVideo} autoPlay playsInline/>
-                    <PeerVideoDescriptionContainer>{context.user ? context.user.name : ""}</PeerVideoDescriptionContainer>
+                    <VideoDescriptionContainer>{context.user ? context.user.name : "Guest"}</VideoDescriptionContainer>
                 </UserVideoContainer>
                 <PeersVideoContainer>
                     {peers.map(peer => {

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from "react";
-import {PeerVideoDescriptionContainer, PeerVideoPlayer, SinglePeerVideoContainer} from "../styled-components";
+import {VideoDescriptionContainer, PeerVideoPlayer, SinglePeerVideoContainer} from "../styled-components";
 
 const PeerVideo = (props) => {
     const ref = useRef();
@@ -12,7 +12,7 @@ const PeerVideo = (props) => {
     return (
         <SinglePeerVideoContainer>
             <PeerVideoPlayer playsInline autoPlay ref={ref}/>
-            <PeerVideoDescriptionContainer>{props.username}</PeerVideoDescriptionContainer>
+            <VideoDescriptionContainer>{props.username}</VideoDescriptionContainer>
         </SinglePeerVideoContainer>
     );
 }

@@ -1,5 +1,5 @@
-import {ControlIcon, ControlsIconContainer} from "../styled-components";
-import leaveCallIcon from "../icons/leaveCallIcon.png";
+import {ControlIcon, ControlsIconContainer} from "../../styled-components";
+import leaveCallIcon from "../../icons/leaveCallIcon.png";
 import React from "react";
 
 const LeaveCallControl = ({leaveCall}) => (

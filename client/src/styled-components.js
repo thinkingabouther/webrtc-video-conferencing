@@ -17,7 +17,7 @@ export const SinglePeerVideoContainer = styled.div`
     background: white;
 `
 
-export const PeerVideoDescriptionContainer = styled.div`
+export const VideoDescriptionContainer = styled.div`
     background: white;
     width: 100%;
 `
