@@ -80,8 +80,8 @@ export const ControlIcon = styled.img`
 
 export const AuthComponentContainer = styled.div`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 1rem;
+  right: 1rem;
 `
 
 export const LogoutIconContainer = styled.span`
@@ -100,4 +100,20 @@ export const LogoutContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-`
+`;
+
+export const JoinRoomContainer = styled.div`
+    
+`;
+
+export const UserInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const HomeContainer = styled.div`
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`;

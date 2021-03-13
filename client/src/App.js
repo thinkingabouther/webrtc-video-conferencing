@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Home from "./components/Home";
-import Room from "./components/Room";
-import { AuthConsumer } from "./components/AuthProvider";
+import Home from "./components/containers/Home";
+import Room from "./components/containers/Room";
+import { AuthConsumer } from "./components/auth/AuthProvider";
 
 function App() {
   return (

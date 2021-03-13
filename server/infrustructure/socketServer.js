@@ -29,7 +29,6 @@ module.exports = (server) => {
       const usersInThisRoom = rooms[connectionInfo.roomID].filter(
         (user) => user.socketID !== socket.id
       );
-      console.log(usersInThisRoom);
       socket.emit("all users", usersInThisRoom);
     });
 
@@ -42,8 +41,6 @@ module.exports = (server) => {
         callerID: payload.callerID,
         username: user.username,
       };
-      console.log("user info");
-      console.log(userInfo.username);
       io.to(payload.userToSignal).emit("user joined", userInfo);
     });
 

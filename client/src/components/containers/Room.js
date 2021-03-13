@@ -10,14 +10,14 @@ import {
   RoomContainer,
   UserVideo,
   UserVideoContainer,
-} from "../styled-components";
+} from "../../styled-components";
 
-import PeerVideo from "./PeerVideo";
-import VideoControl from "./roomControls/VideoControl";
-import AudioControl from "./roomControls/AudioControl";
-import LeaveCallControl from "./roomControls/LeaveCallControl";
-import ShareScreenControl from "./roomControls/ShareScreenControl";
-import { AuthConsumer } from "./AuthProvider";
+import PeerVideo from "../roomComponents/PeerVideo";
+import VideoControl from "../roomComponents/VideoControl";
+import AudioControl from "../roomComponents/AudioControl";
+import LeaveCallControl from "../roomComponents/LeaveCallControl";
+import ShareScreenControl from "../roomComponents/ShareScreenControl";
+import { AuthConsumer } from "../auth/AuthProvider";
 
 const videoConstraints = {
   height: window.innerHeight / 2,
@@ -51,7 +51,6 @@ const Room = (props) => {
           roomID: roomID,
           username: props.user ? props.user.name : "Guest",
         };
-        console.log(`userInfo: ${connectionInfo.username}`);
         socketRef.current.emit("join room", connectionInfo);
         socketRef.current.on("all users", (users) => {
           const peers = [];
@@ -75,7 +74,6 @@ const Room = (props) => {
         });
 
         socketRef.current.on("user joined", (payload) => {
-          console.log(payload);
           const peer = addPeer(payload.signal, payload.callerID, stream);
           userPeer.current = peer;
           peersRef.current.push({
