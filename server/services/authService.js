@@ -9,10 +9,9 @@ exports.login = async (token) => {
     idToken: token,
     audience: oauthConfig.clientId,
   });
-  const { name, email } = ticket.getPayload();
+  const { name, email, picture } = ticket.getPayload();
   const existingUser = await userRepository.findByEmail(email);
-  console.log(existingUser);
-  return existingUser
-    ? existingUser
-    : await userRepository.save({ name, email });
+  const returningUser = existingUser ? existingUser : await userRepository.save({ name, email, picture });
+  console.log(returningUser);
+  return returningUser;
 };

@@ -20,6 +20,13 @@ export const SinglePeerVideoContainer = styled.div`
 export const VideoDescriptionContainer = styled.div`
   background: white;
   width: 100%;
+  text-align: center;
+`;
+
+export const VideoDescription = styled.span`
+  color: black;
+  text-align: center;
+  font-size: large;
 `;
 
 export const PeerVideoPlayer = styled.video`
@@ -29,8 +36,8 @@ export const PeerVideoPlayer = styled.video`
 `;
 
 export const UserVideo = styled.video`
-  height: 90px;
-  width: 160px;
+  height: 180px;
+  width: 320px;
   object-fit: cover;
 `;
 
@@ -67,8 +74,8 @@ export const ControlsIconContainer = styled.span`
   padding: 10px;
   border-radius: 50%;
   border: 2px solid black;
-  width: 2rem;
-  height: 2rem;
+  width: 4rem;
+  height: 4rem;
   cursor: pointer;
   display: flex;
   background: lightgrey;
@@ -79,20 +86,19 @@ export const ControlIcon = styled.img`
 `;
 
 export const AuthComponentContainer = styled.div`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+    position: absolute;
+    right: 1rem
 `;
 
 export const LogoutIconContainer = styled.span`
   padding: 10px;
   border-radius: 50%;
   border: 1px solid black;
-  width: 1rem;
-  height: 1rem;
+  width: 3rem;
+  height: 3rem;
   cursor: pointer;
   display: flex;
-  background: #bb0000;
+  background: grey;
   margin: 3px;
 `;
 
@@ -102,9 +108,7 @@ export const LogoutContainer = styled.div`
   align-items: center;
 `;
 
-export const JoinRoomContainer = styled.div``;
-
-export const AddFriendContainer = styled.div`
+export const JoinRoomContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
@@ -116,7 +120,60 @@ export const HomeContainer = styled.div`
   justify-content: space-around;
 `;
 
-export const UserInfoContainer = styled.div`
+export const FriendContainer = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+export const FriendListContainer = styled.div`
+  margin-top: 3rem;
+`
+
+export const LogoImage = styled.img`
+  width: 60px;
+  height: 60px;
+`;
+
+export const AddFriendErrorText = styled.span`
+  display: inline-block;
+  text-align: center;
+  width: 20rem;
+`;
+
+export const HeaderAppName = styled.span`
+  font-size: large;
+`;
+
+export const UserDataContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: 1rem;
+`;
+
+export const UserPicture = styled.img`
+  border-radius: 50%;
+  object-fit: cover;
+  width: 50px;
+  height: 50px;
+`;
+
+export const FriendPicture = styled.img`
+  border-radius: 50%;
+  object-fit: cover;
+  width: 40px;
+  height: 40px;
+  margin-right: 1rem;
+`;
+
+export const UsernameSpan = styled.span`
+  font-size: large;
+  color: white;
+`;
+
+export const HeaderContainer = styled.div`
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
 `;

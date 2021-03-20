@@ -23,6 +23,7 @@ exports.findFriends = async (user) => {
   friends.forEach((friend) =>
     friendsWithRooms.push({
       name: friend.user.name,
+      picture: friend.user.picture,
       roomID: friend.edge.roomID,
     })
   );

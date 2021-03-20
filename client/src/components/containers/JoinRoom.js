@@ -1,16 +1,12 @@
 import { JoinRoomContainer } from "../../styled-components";
-import { v1 as uuid } from "uuid";
+import JoinRoomHeader from "../headers/JoinRoomHeader";
+import ChooseRoom from "../interaction/ChooseRoom";
 
-const JoinRoom = (props) => {
-  function create() {
-    const id = uuid();
-    props.history.push(`/room/${id}`);
-  }
-
-  return (
+const JoinRoom = () => (
     <JoinRoomContainer>
-      <button onClick={create}>Create room</button>
+      <JoinRoomHeader />
+      <ChooseRoom />
     </JoinRoomContainer>
-  );
-};
+)
+
 export default JoinRoom;

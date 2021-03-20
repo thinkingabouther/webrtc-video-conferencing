@@ -9,7 +9,7 @@ import {
   VideoDescriptionContainer,
   RoomContainer,
   UserVideo,
-  UserVideoContainer,
+  UserVideoContainer, VideoDescription,
 } from "../../styled-components";
 
 import PeerVideo from "../roomComponents/PeerVideo";
@@ -201,7 +201,9 @@ const Room = (props) => {
           <UserVideoContainer>
             <UserVideo muted ref={userVideo} autoPlay playsInline />
             <VideoDescriptionContainer>
-              {context.user ? context.user.name : "Guest"}
+              <VideoDescription>
+                {context.user ? context.user.name : "Guest"}
+              </VideoDescription>
             </VideoDescriptionContainer>
           </UserVideoContainer>
           <PeersVideoContainer>

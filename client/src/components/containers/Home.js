@@ -3,22 +3,21 @@ import { AuthConsumer } from "../auth/AuthProvider";
 import AuthComponent from "../auth/AuthComponent";
 import { HomeContainer } from "../../styled-components";
 import JoinRoom from "./JoinRoom";
-import UserInfo from "./UserInfo";
+import FriendList from "./FriendList";
+import Header from "../headers/Header";
 
-const Home = (props) => {
-  return (
+const Home = (props) => (
     <AuthConsumer>
       {(context) => (
         <div>
+          <Header user={context.user}/>
           <HomeContainer>
             <JoinRoom history={props.history} />
-            <UserInfo />
+            <FriendList />
           </HomeContainer>
-          <AuthComponent user={context.user} />
         </div>
       )}
     </AuthConsumer>
-  );
-};
+)
 
 export default Home;
