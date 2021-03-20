@@ -55,7 +55,7 @@ module.exports = (server) => {
       const roomID = socketToRoom[socket.id];
       let room = rooms[roomID];
       if (room) {
-        room = room.filter((id) => id !== socket.id);
+        room = room.filter((peer) => peer.socketID !== socket.id);
         rooms[roomID] = room;
       }
       socket.broadcast.emit("user left", socket.id);
