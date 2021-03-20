@@ -12,12 +12,12 @@ import {
   ListGroupItemHeading,
 } from "shards-react";
 import {
-  AddFriendErrorText,
+  AddFriendErrorText, FriendLink,
   FriendListContainer,
   FriendPicture,
   UserPicture,
 } from "../../styled-components";
-import { useHistory } from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
 const friendsEndpoint = "api/user/friends";
 
@@ -33,8 +33,8 @@ const AddedFriendList = () => {
   };
 
   const goToRoom = (roomID) => {
-    history.push("room/" + roomID);
-  };
+     history.push("room/" + roomID)
+  }
 
   const addFriend = async () => {
     const res = await fetch("/api/user/add-friend", {
@@ -86,12 +86,12 @@ const AddedFriendList = () => {
           {data &&
             data.length > 0 &&
             data.map((friend) => (
-              <a href="#" onClick={() => goToRoom(friend.roomID)}>
+              <FriendLink onClick={() => goToRoom(friend.roomID)}>
                 <ListGroupItem key={friend.roomID}>
                   <FriendPicture src={friend.picture} />
                   {friend.name}
                 </ListGroupItem>
-              </a>
+              </FriendLink>
             ))}
         </ListGroup>
       </FriendListContainer>

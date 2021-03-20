@@ -177,3 +177,8 @@ export const HeaderContainer = styled.div`
   margin-top: 1rem;
   margin-bottom: 3rem;
 `;
+
+export const FriendLink = styled.span`
+  cursor: pointer;
+  text-decoration: underline;
+`;
