@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:12-alpine
 
 ADD ./server/yarn.lock ./server/package.json server/
 WORKDIR server

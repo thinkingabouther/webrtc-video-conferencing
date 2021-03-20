@@ -14,6 +14,7 @@ const AuthProvider = (props) => {
         "Content-Type": "application/json",
       },
     });
+    if (res.status !== 201) return;
     const userData = await res.json();
     setData(userData);
   };
