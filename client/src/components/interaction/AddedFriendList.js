@@ -17,10 +17,12 @@ import {
   FriendPicture,
   UserPicture,
 } from "../../styled-components";
+import {useHistory} from "react-router-dom";
 
 const friendsEndpoint = "api/user/friends";
 
 const AddedFriendList = () => {
+  const history = useHistory();
   const [userEmail, setUserEmail] = useState();
   const [error, setError] = useState("");
   const [isError, setIsError] = useState(false);
@@ -29,6 +31,10 @@ const AddedFriendList = () => {
   const handleInputChange = (e) => {
     setUserEmail(e.target.value);
   };
+
+  const goToRoom = (roomID) => {
+     history.push("room/" + roomID)
+  }
 
   const addFriend = async () => {
     const res = await fetch("/api/user/add-friend", {
@@ -80,7 +86,7 @@ const AddedFriendList = () => {
           {data &&
             data.length > 0 &&
             data.map((friend) => (
-              <a href={"room/" + friend.roomID}>
+              <a href="#" onClick={() => goToRoom(friend.roomID)}>
                 <ListGroupItem key={friend.roomID}>
                   <FriendPicture src={friend.picture} />
                   {friend.name}
