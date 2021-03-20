@@ -7,17 +7,17 @@ import FriendList from "./FriendList";
 import Header from "../headers/Header";
 
 const Home = (props) => (
-    <AuthConsumer>
-      {(context) => (
-        <div>
-          <Header user={context.user}/>
-          <HomeContainer>
-            <JoinRoom history={props.history} />
-            <FriendList />
-          </HomeContainer>
-        </div>
-      )}
-    </AuthConsumer>
-)
+  <AuthConsumer>
+    {(context) => (
+      <div>
+        <Header user={context.user} />
+        <HomeContainer>
+          <JoinRoom history={props.history} />
+          <FriendList />
+        </HomeContainer>
+      </div>
+    )}
+  </AuthConsumer>
+);
 
 export default Home;

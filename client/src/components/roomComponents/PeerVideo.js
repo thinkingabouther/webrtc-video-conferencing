@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from "react";
 import {
   VideoDescriptionContainer,
   PeerVideoPlayer,
-  SinglePeerVideoContainer, VideoDescription,
+  SinglePeerVideoContainer,
+  VideoDescription,
 } from "../../styled-components";
 
 const PeerVideo = (props) => {
@@ -17,9 +18,7 @@ const PeerVideo = (props) => {
     <SinglePeerVideoContainer>
       <PeerVideoPlayer playsInline autoPlay ref={ref} />
       <VideoDescriptionContainer>
-        <VideoDescription>
-          {props.username}
-        </VideoDescription>
+        <VideoDescription>{props.username}</VideoDescription>
       </VideoDescriptionContainer>
     </SinglePeerVideoContainer>
   );

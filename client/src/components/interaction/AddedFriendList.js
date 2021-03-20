@@ -5,12 +5,18 @@ import {
   Fade,
   FormGroup,
   FormInput,
-  InputGroup, InputGroupAddon,
+  InputGroup,
+  InputGroupAddon,
   ListGroup,
   ListGroupItem,
-  ListGroupItemHeading
+  ListGroupItemHeading,
 } from "shards-react";
-import {AddFriendErrorText, FriendListContainer, FriendPicture, UserPicture} from "../../styled-components";
+import {
+  AddFriendErrorText,
+  FriendListContainer,
+  FriendPicture,
+  UserPicture,
+} from "../../styled-components";
 
 const friendsEndpoint = "api/user/friends";
 
@@ -34,13 +40,12 @@ const AddedFriendList = () => {
         "Content-Type": "application/json",
       },
     });
-    console.log(res)
+    console.log(res);
     if (res.status !== 201) {
       const json = await res.json();
       setError(json.message);
       setIsError(true);
-    }
-    else {
+    } else {
       setIsError(false);
     }
     mutate();
@@ -52,34 +57,36 @@ const AddedFriendList = () => {
         <label htmlFor="email">Add your new friend</label>
         <InputGroup>
           <FormInput
-          id="email"
-          invalid={isError}
-          placeholder={"example@inbox.com"}
-          value={userEmail}
-          onChange={handleInputChange}
+            id="email"
+            invalid={isError}
+            placeholder={"example@inbox.com"}
+            value={userEmail}
+            onChange={handleInputChange}
           />
           <InputGroupAddon type="append">
             <Button onClick={addFriend}>Add!</Button>
           </InputGroupAddon>
         </InputGroup>
         <Fade in={isError}>
-          <AddFriendErrorText>
-            {error}
-          </AddFriendErrorText>
+          <AddFriendErrorText>{error}</AddFriendErrorText>
         </Fade>
       </FormGroup>
       <FriendListContainer>
         <ListGroup>
           <ListGroupItemHeading>Added friends:</ListGroupItemHeading>
-          {(!data || data.message) && <ListGroupItem>Your friends will appear here</ListGroupItem>}
+          {(!data || data.message) && (
+            <ListGroupItem>Your friends will appear here</ListGroupItem>
+          )}
           {data &&
             data.length > 0 &&
-          data.map((friend) =>
+            data.map((friend) => (
               <a href={"room/" + friend.roomID}>
                 <ListGroupItem key={friend.roomID}>
-                  <FriendPicture src={friend.picture}/>{friend.name}
+                  <FriendPicture src={friend.picture} />
+                  {friend.name}
                 </ListGroupItem>
-              </a>)}
+              </a>
+            ))}
         </ListGroup>
       </FriendListContainer>
     </>

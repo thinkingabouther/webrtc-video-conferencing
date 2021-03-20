@@ -3,10 +3,13 @@ import { oauth } from "../../config";
 import React from "react";
 import { AuthConsumer } from "./AuthProvider";
 import {
-    AuthComponentContainer,
-    ControlIcon,
-    LogoutContainer,
-    LogoutIconContainer, UserDataContainer, UsernameSpan, UserPicture,
+  AuthComponentContainer,
+  ControlIcon,
+  LogoutContainer,
+  LogoutIconContainer,
+  UserDataContainer,
+  UsernameSpan,
+  UserPicture,
 } from "../../styled-components";
 
 import logoutIcon from "../../icons/logoutIcon.png";
@@ -35,10 +38,10 @@ const AuthComponent = (props) => {
         <AuthConsumer>
           {(context) => (
             <LogoutContainer>
-                <UserDataContainer>
-                    <UserPicture src={context.user.picture} alt="user picture"/>
-                    <UsernameSpan>{context.user.name}</UsernameSpan>
-                </UserDataContainer>
+              <UserDataContainer>
+                <UserPicture src={context.user.picture} alt="user picture" />
+                <UsernameSpan>{context.user.name}</UsernameSpan>
+              </UserDataContainer>
               <LogoutIconContainer onClick={context.logOut}>
                 <ControlIcon src={logoutIcon} alt={"Logout"} />
               </LogoutIconContainer>

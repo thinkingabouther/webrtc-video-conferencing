@@ -5,8 +5,8 @@ import FriendHeader from "../headers/FriendHeader";
 const FriendList = () => {
   return (
     <FriendContainer>
-        <FriendHeader />
-        <AddedFriendList />
+      <FriendHeader />
+      <AddedFriendList />
     </FriendContainer>
   );
 };

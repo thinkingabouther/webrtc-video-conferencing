@@ -86,8 +86,8 @@ export const ControlIcon = styled.img`
 `;
 
 export const AuthComponentContainer = styled.div`
-    position: absolute;
-    right: 1rem
+  position: absolute;
+  right: 1rem;
 `;
 
 export const LogoutIconContainer = styled.span`
@@ -127,7 +127,7 @@ export const FriendContainer = styled.div`
 
 export const FriendListContainer = styled.div`
   margin-top: 3rem;
-`
+`;
 
 export const LogoImage = styled.img`
   width: 60px;

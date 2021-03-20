@@ -5,7 +5,7 @@ const userCollection = dbConnection.collection(userCollectionName);
 const aql = arangojs.aql;
 
 exports.save = async (user) => {
-  user = await userCollection.save(user, {returnNew: true});
+  user = await userCollection.save(user, { returnNew: true });
   return user.new;
 };
 

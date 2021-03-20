@@ -9,7 +9,8 @@ import {
   VideoDescriptionContainer,
   RoomContainer,
   UserVideo,
-  UserVideoContainer, VideoDescription,
+  UserVideoContainer,
+  VideoDescription,
 } from "../../styled-components";
 
 import PeerVideo from "../roomComponents/PeerVideo";
