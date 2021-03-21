@@ -2,10 +2,10 @@ const userService = require("../services/userService");
 
 exports.addFriend = async (req, res) => {
   if (req.body.email === "") {
-    res.status(400)
+    res.status(400);
     res.json({
-      message: "Email cannot be empty!"
-    })
+      message: "Email cannot be empty!",
+    });
     return;
   }
   try {
