@@ -1,6 +1,13 @@
 const userService = require("../services/userService");
 
 exports.addFriend = async (req, res) => {
+  if (req.body.email === "") {
+    res.status(400)
+    res.json({
+      message: "Email cannot be empty!"
+    })
+    return;
+  }
   try {
     await userService.addFriend(req.user, req.body.email);
   } catch (e) {
