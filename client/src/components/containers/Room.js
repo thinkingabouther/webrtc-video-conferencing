@@ -168,6 +168,7 @@ const Room = (props) => {
       userStream.current.getTracks().forEach((track) => track.stop());
     }
     history.replace("/");
+    window.location.reload(false);
   };
 
   const shareScreen = () => {

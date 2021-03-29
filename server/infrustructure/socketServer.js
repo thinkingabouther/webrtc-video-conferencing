@@ -54,6 +54,7 @@ module.exports = (server) => {
     socket.on("disconnect", () => {
       const roomID = socketToRoom[socket.id];
       let room = rooms[roomID];
+      console.log(room);
       if (room) {
         room = room.filter((peer) => peer.socketID !== socket.id);
         rooms[roomID] = room;
