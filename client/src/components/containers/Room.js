@@ -213,7 +213,7 @@ const Room = (props) => {
               return (
                 <PeerVideo
                   key={peer.peerID}
-                  peer={peer.username}
+                  peer={peer.peer}
                   username={peer.username}
                 />
               );
