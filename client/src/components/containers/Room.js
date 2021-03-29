@@ -98,10 +98,13 @@ const Room = (props) => {
         });
 
         socketRef.current.on("user left", (id) => {
-          const peerObj = peersRef.current.find((p) => p.peerID === id);
-          if (peerObj) peerObj.peer.destroy();
-          const peers = peersRef.current.filter((p) => p.peerID !== id);
-          setPeers(peers);
+          const peerObj = peersRef.current.find(p => p.peerID === id);
+          if (peerObj) {
+            peerObj.peer.destroy();
+            peersRef.current = peersRef.current.filter(p => p.peerID !== id)
+          }
+          const peersLeft = peersRef.current.filter(p => p.peerID !== id);
+          setPeers(peersLeft);
         });
       });
   }, []);
@@ -209,7 +212,8 @@ const Room = (props) => {
             </VideoDescriptionContainer>
           </UserVideoContainer>
           <PeersVideoContainer>
-            {peers.map((peer) => {
+            {
+              peers.map((peer) => {
               return (
                 <PeerVideo
                   key={peer.peerID}
