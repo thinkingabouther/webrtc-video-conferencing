@@ -1,6 +1,6 @@
 # webrtc-video-conferencing
 
-## Overwiev
+## Overview
 
 This app allows users to communicate with each over using WebRTC techonological stack.
 
@@ -62,8 +62,8 @@ docker build -t your-image-tag-name .
 2. Run a container using:
 
 ```
-docker run \
---env PORT=any-port-in-container \
--p your-desired-port:port-in-container \
+docker run /
+--env PORT=any-port-in-container /
+-p your-desired-port:port-in-container /
 your-image-name
 ```
