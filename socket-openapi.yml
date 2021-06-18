@@ -1,0 +1,75 @@
+asyncapi: 2.0.0
+info:
+  title: WebRTC Socket Engine
+  version: 1.0.0
+  description: This service is in charge of processing user sharing connection data
+channels:
+  /user/joining:
+    subscribe:
+      message:
+        $ref: '#/components/messages/user'
+  /user/joined:
+    publish:
+      message:
+        $ref: '#/components/messages/users'
+  /user/leaving:
+    subscribe:
+      message:
+        $ref: '#/components/messages/user'
+  /user/left:
+    publish:
+      message:
+        $ref: '#/components/messages/user'
+        
+components:
+  messages:
+    user:
+      payload:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Id of connecting user
+          iceConfig:
+            type: object
+            description: data to connect
+            properties:
+              type:
+                type: string
+                description: connection type
+              natData:
+                type: string
+                description: data to pass NAT
+        example:
+          id: 78403b58-a5f3-11eb-bcbc-0242ac130002
+          iceConfig:
+            type: offer
+            natData: candidate:1312755319 1 tcp 1518149375 192.168.2.55 9 typ host tcptype active generation 0 network-id 3 network-cost 50\r\na=candidate:851719950
+    users:
+      payload:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Id of connecting user
+            iceConfig:
+              type: object
+              description: data to connect
+              properties:
+                type:
+                  type: string
+                  description: connection type
+                natData:
+                  type: string
+                  description: data to pass NAT
+        example:
+          - id: 78403b58-a5f3-11eb-bcbc-0242ac130002
+            iceConfig:
+              type: offer
+              natData: candidate:1312755319 1 tcp 1518149375 192.168.2.55 9 typ host tcptype active generation 0 network-id 3 network-cost 50\r\na=candidate:851719950
+          - id: debe31fc-fe2e-4404-8ee9-1d9252553c96
+            iceConfig:
+              type: offer
+              natData: candidate:1312755319 1 tcp 1518149375 192.168.2.55 9 typ host tcptype active generation 0 network-id 3 network-cost 50\r\na=candidate:851719950
