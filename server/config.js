@@ -1,6 +1,6 @@
 module.exports = {
   db: {
-    url: "http://35.238.54.3:8529/",
+    url: "http://35.238.54.3:8529",
     databaseName: "p2p-videoconferencing",
     user: "p2p-api",
     password: "123456",
