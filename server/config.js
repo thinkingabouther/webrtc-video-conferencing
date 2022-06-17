@@ -1,9 +1,9 @@
 module.exports = {
   db: {
-    url: "http://185.70.196.228:8443",
-    databaseName: "socket-chat",
-    user: "root",
-    password: "tCZulciYg1",
+    url: "http://35.238.54.3:8529/",
+    databaseName: "p2p-videoconferencing",
+    user: "p2p-api",
+    password: "123456",
   },
   oauth: {
     clientId:
